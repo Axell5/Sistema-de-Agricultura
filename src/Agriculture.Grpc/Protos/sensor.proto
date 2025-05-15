@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option csharp_namespace = "Agriculture.Grpc";
+
+package sensor;
+
+service SensorService {
+  rpc GetAllSensors (Empty) returns (SensorList);
+  rpc GetSensor (SensorRequest) returns (SensorResponse);
+  rpc CreateSensor (SensorResponse) returns (SensorResponse);
+  rpc UpdateSensor (SensorResponse) returns (Empty);
+  rpc DeleteSensor (SensorRequest) returns (Empty);
+}
+
+message Empty {}
+
+message SensorRequest {
+  int32 id = 1;
+}
+
+message SensorResponse {
+  int32 id = 1;
+  string name = 2;
+  string type = 3;
+  double value = 4;
+  string lastReading = 5;
+  bool isActive = 6;
+}
+
+message SensorList {
+  repeated SensorResponse sensors = 1;
+}
