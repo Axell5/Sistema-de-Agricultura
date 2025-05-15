@@ -1,8 +1,14 @@
 using Agriculture.Business.Services;
 using Agriculture.Data.Repositories;
 using Agriculture.Grpc.Services;
+using Agriculture.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add database context
+builder.Services.AddDbContext<AgricultureContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -29,5 +35,12 @@ app.UseAuthorization();
 // Map controllers and gRPC services
 app.MapControllers();
 app.MapGrpcService<GrpcSensorService>();
+
+// Apply migrations
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AgricultureContext>();
+    context.Database.Migrate();
+}
 
 app.Run();
